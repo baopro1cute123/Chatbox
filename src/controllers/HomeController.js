@@ -157,26 +157,30 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
-let setupProfile = (req, res) => {
+let setupProfile = async (req, res) => {
     // call profile fb api
     let request_body = {
-        "get_started": "GET_STARTED",
-        "whitelisted_domains": "https://chatbox-bookingdoctor.onrender.com/",
+        
+        "get_started": {"payload": "GET_STARTED"},
+        "whitelisted_domains": ["https://chatbox-bookingdoctor.onrender.com/"],
     }
     
     // Send the HTTP request to the Messenger Platform
-    request({
+    await request({
         "uri": `https://graph.facebook.com/v18.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`,
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
+        console.log(body)
         if (!err) {
             console.log('Setup user profile succeed!')
         } else {
             console.error("Setup user profile error!:" + err);
         }
     });
+
+    return res.send("Setup user profile succeed!")
 }
 
 

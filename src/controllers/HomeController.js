@@ -1,7 +1,8 @@
 require('dotenv').config();
 import request from "request";
 
-//process.env.NAME_VARIABLES
+
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 let getHomePage = (req, res) => {
     return res.render('homepage.ejs');
 };
@@ -156,9 +157,33 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
+let setupProfile = (req, res) => {
+    // call profile fb api
+    let request_body = {
+        "get_started": "GET_STARTED",
+        "whitelisted_domains": "https://chatbox-bookingdoctor.onrender.com/",
+    }
+    
+    // Send the HTTP request to the Messenger Platform
+    request({
+        "uri": `https://graph.facebook.com/v18.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`,
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+        if (!err) {
+            console.log('Setup user profile succeed!')
+        } else {
+            console.error("Setup user profile error!:" + err);
+        }
+    });
+}
+
+
 module.exports = {
     getHomePage: getHomePage,
     postWebhook: postWebhook,
-    getWebhook: getWebhook
+    getWebhook: getWebhook,
+    setupProfile: setupProfile,
 
 }
